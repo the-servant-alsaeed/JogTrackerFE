@@ -83,12 +83,10 @@ const handleSubmit = async (e: React.FormEvent) => {
                 </Form.Group>
             </Form>
             </div>
-            <Button className="w-100" type="submit">Sign Up</Button>
-            <p>Need an account?<br/>
+            <Button className="w-100" type="submit">Sign In</Button>
             <div className="w-100 text-center mt-2">
-                <Link to='/signup'>Sign Up</Link>
+                Need an account? <Link to='/'>Sign Up</Link>
             </div>
-            </p>
     </div>
   )
 }
