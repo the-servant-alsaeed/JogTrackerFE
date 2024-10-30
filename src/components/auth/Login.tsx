@@ -2,9 +2,10 @@ import { useState, useRef, useEffect, useContext } from 'react'
 import AuthContext from '../../context/AuthProvider';
 import { Button, Form } from 'react-bootstrap'
 import { Link } from 'react-router-dom';
+import { isAxiosError } from 'axios';
 
 import axios from '../../api/axios';
-const LOGIN_URL = '/auth';
+const LOGIN_URL = '/auth/login';
 
 const Login = () => {
   //@ts-ignore
@@ -29,8 +30,8 @@ const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-        const response = await axios.post(LOGIN_URL, 
-            JSON.stringify({email, password}), 
+        const response = await axios.post(LOGIN_URL,
+            JSON.stringify({ email, password }), 
             {
                 headers: {'Content-Type': 'application/json'},
                 withCredentials: true,
@@ -39,17 +40,17 @@ const handleSubmit = async (e: React.FormEvent) => {
         const accessToken = response?.data?.token;
         const roles = response?.data?.roles;
         setAuth({ email, password, accessToken, roles });
-        setEmail('');
-        setPassword('');
+        setEmail(email);
+        setPassword(password);
         setSuccess(true);
-    } catch (error){
-        console.error(error);
+    } catch (error: any){
+        if (isAxiosError(error)) {
+            setError(error.response?.data?.message || 'Login failed');
+        } else {
+            setError('Login failed');
+        }
         errorRef.current?.focus();
     }
-
-    setEmail('');
-    setPassword('');
-    setSuccess(true);
 }
 
   
@@ -72,18 +73,18 @@ const handleSubmit = async (e: React.FormEvent) => {
                     value={email}
                     required />
                 </Form.Group>
-                <Form.Group id="password">
+                <Form.Group id="password" className='mb-4'>
                     <Form.Label>Password</Form.Label>
                     <Form.Control 
                     type="password"
                     id='password'
                     onChange={(e) => setPassword(e.target.value)}
-                    value={email}
+                    value={password}
                     required />
                 </Form.Group>
+                <Button className="w-100" type="submit">Sign In</Button>
             </Form>
             </div>
-            <Button className="w-100" type="submit">Sign In</Button>
             <div className="w-100 text-center mt-2">
                 Need an account? <Link to='/'>Sign Up</Link>
             </div>
